@@ -7,8 +7,6 @@ from tkinter import filedialog, messagebox, ttk
 import moviepy.editor as mp
 import re
 
-
-
 output_folder = ""
 
 folder_selected = False
@@ -31,7 +29,6 @@ def StartConversion():
         messagebox.showerror("Error", "Please select an output folder")
         return
 
-    n = 1
     for i, url in enumerate(playlist, 1):
         total_videos = len(playlist.video_urls)
         progress_step = 100 / total_videos
@@ -43,9 +40,13 @@ def StartConversion():
                 new_file = mp.AudioFileClip(mp4_path)
                 new_file.write_audiofile(mp3_path)
                 mp3_filename = os.path.basename(mp3_path)
-                os.rename(os.path.join(output_folder, mp3_filename), os.path.join(output_folder, f"{i}_{mp3_filename}"))
+                if i < 10:
+                     os.rename(os.path.join(output_folder, mp3_filename), os.path.join(output_folder, f"00{i}_{mp3_filename}"))
+                elif 100 > i >= 10:
+                     os.rename(os.path.join(output_folder, mp3_filename), os.path.join(output_folder, f"0{i}_{mp3_filename}"))
+                else:
+                     os.rename(os.path.join(output_folder, mp3_filename), os.path.join(output_folder, f"{i}_{mp3_filename}"))
                 os.remove(mp4_path)
-                n + 1
                 progress.set(progress.get() + progress_step)
                 progressbar.update()
 
