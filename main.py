@@ -32,7 +32,7 @@ def StartConversion():
         return
 
     n = 1
-    for i, url in enumerate(playlist):
+    for i, url in enumerate(playlist, 1):
         total_videos = len(playlist.video_urls)
         progress_step = 100 / total_videos
         YouTube(url).streams.filter(only_audio=True).first().download(output_folder)
@@ -42,14 +42,13 @@ def StartConversion():
                 mp3_path = os.path.join(output_folder, os.path.splitext(file)[0]+'.mp3')
                 new_file = mp.AudioFileClip(mp4_path)
                 new_file.write_audiofile(mp3_path)
+                mp3_filename = os.path.basename(mp3_path)
+                os.rename(os.path.join(output_folder, mp3_filename), os.path.join(output_folder, f"{i}_{mp3_filename}"))
                 os.remove(mp4_path)
                 n + 1
                 progress.set(progress.get() + progress_step)
                 progressbar.update()
 
-            
-                      
-            
 
 def select_folder():
         global output_folder
