@@ -1,4 +1,4 @@
-from pytube import YouTube
+from pytube import YouTube, extract
 from pytube import Playlist
 import os
 from tkinter import *
@@ -6,17 +6,12 @@ import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 import moviepy.editor as mp
 import re
-import urllib3
 import eyed3
-import requests
-import io
-from PIL import Image
+from pythumb import Thumbnail
 
 output_folder = ""
 
 folder_selected = False
-
-http = urllib3.PoolManager()
 
 root = Tk()
 root.title(" YouTube Playlist Downloader ")
@@ -40,16 +35,14 @@ def StartConversion():
         total_videos = len(playlist.video_urls)
         progress_step = 100 / total_videos
         video = YouTube(url)
-        thumbnail = video.thumbnail_url
+        vid_id = extract.video_id(url)
+        thumbnail = Thumbnail(f"https://youtu.be/{vid_id}")
         video.streams.filter(only_audio=True).first().download(output_folder)
         for file in os.listdir(output_folder):
             if re.search('mp4', file):
-                img_content = requests.get(thumbnail).content
-                img_file = io.BytesIO(img_content)
-                img = Image.open(img_file)
-                album_art_path = os.path.join(output_folder, "album_art_file.png")
-                with open (f'{output_folder}/album_art_file.png', "wb") as album_art:
-                     img.save(album_art, "PNG")
+                thumbnail.fetch(size="maxresdefault")
+                thumbnail.save(output_folder, "album_art_file")
+                album_art_path = os.path.join(output_folder, "album_art_file.jpg")
                 mp4_path = os.path.join(output_folder, file)
                 mp3_path = os.path.join(output_folder, os.path.splitext(file)[0]+'.mp3')
                 new_file = mp.AudioFileClip(mp4_path)
@@ -57,7 +50,7 @@ def StartConversion():
                 mp3_filename = os.path.basename(mp3_path)
                 selected_music_file = os.path.join(output_folder, mp3_filename)
                 no_art_file = eyed3.load(selected_music_file)
-                no_art_file.tag.images.set(3, open(album_art_path, 'rb').read(), 'image/png')
+                no_art_file.tag.images.set(3, open(album_art_path, 'rb').read(), 'image/jpg')
                 no_art_file.tag.save()
                 if i < 10:
                      os.rename(os.path.join(output_folder, mp3_filename), os.path.join(output_folder, f"00{i}_{mp3_filename}"))
@@ -66,8 +59,6 @@ def StartConversion():
                 else:
                      os.rename(os.path.join(output_folder, mp3_filename), os.path.join(output_folder, f"{i}_{mp3_filename}"))
                 os.remove(mp4_path)
-                if os.path.exists(mp3_path):
-                     os.replace(mp3_path)
                 os.remove(album_art_path)
                 progress.set(progress.get() + progress_step)
                 if progressbar.step(100):
