@@ -40,31 +40,32 @@ def StartConversion():
         video.streams.filter(only_audio=True).first().download(output_folder)
         for file in os.listdir(output_folder):
             if re.search('mp4', file):
-                thumbnail.fetch(size="maxresdefault")
-                thumbnail.save(output_folder, "album_art_file")
-                album_art_path = os.path.join(output_folder, "album_art_file.jpg")
-                mp4_path = os.path.join(output_folder, file)
-                mp3_path = os.path.join(output_folder, os.path.splitext(file)[0]+'.mp3')
-                new_file = mp.AudioFileClip(mp4_path)
-                new_file.write_audiofile(mp3_path)
-                mp3_filename = os.path.basename(mp3_path)
-                selected_music_file = os.path.join(output_folder, mp3_filename)
-                no_art_file = eyed3.load(selected_music_file)
-                no_art_file.tag.images.set(3, open(album_art_path, 'rb').read(), 'image/jpg')
-                no_art_file.tag.save()
-                if i < 10:
-                     os.rename(os.path.join(output_folder, mp3_filename), os.path.join(output_folder, f"00{i}_{mp3_filename}"))
-                elif 100 > i >= 10:
-                     os.rename(os.path.join(output_folder, mp3_filename), os.path.join(output_folder, f"0{i}_{mp3_filename}"))
-                else:
-                     os.rename(os.path.join(output_folder, mp3_filename), os.path.join(output_folder, f"{i}_{mp3_filename}"))
-                os.remove(mp4_path)
-                os.remove(album_art_path)
-                progress.set(progress.get() + progress_step)
-                if progressbar.step(100):
+                if progressbar.after(100):
                      messagebox.showinfo("Finished!", "The playlist is done downlading and converting!")
                      return
-                progressbar.update()
+                else:
+                    progressbar.update()
+                    progress.set(progress.get() + progress_step)
+                    thumbnail.fetch(size="maxresdefault")
+                    thumbnail.save(output_folder, "album_art_file")
+                    album_art_path = os.path.join(output_folder, "album_art_file.jpg")
+                    mp4_path = os.path.join(output_folder, file)
+                    mp3_path = os.path.join(output_folder, os.path.splitext(file)[0]+'.mp3')
+                    new_file = mp.AudioFileClip(mp4_path)
+                    new_file.write_audiofile(mp3_path)
+                    mp3_filename = os.path.basename(mp3_path)
+                    selected_music_file = os.path.join(output_folder, mp3_filename)
+                    no_art_file = eyed3.load(selected_music_file)
+                    no_art_file.tag.images.set(3, open(album_art_path, 'rb').read(), 'image/jpg')
+                    no_art_file.tag.save()
+                    if i < 10:
+                        os.rename(os.path.join(output_folder, mp3_filename), os.path.join(output_folder, f"00{i}_{mp3_filename}"))
+                    elif 100 > i >= 10:
+                        os.rename(os.path.join(output_folder, mp3_filename), os.path.join(output_folder, f"0{i}_{mp3_filename}"))
+                    else:
+                        os.rename(os.path.join(output_folder, mp3_filename), os.path.join(output_folder, f"{i}_{mp3_filename}"))
+                    os.remove(mp4_path)
+                    os.remove(album_art_path)
 
 
 def select_folder():
