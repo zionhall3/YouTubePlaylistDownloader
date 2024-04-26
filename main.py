@@ -31,41 +31,48 @@ def StartConversion():
         messagebox.showerror("Error", "Please select an output folder")
         return
 
-    for i, url in enumerate(playlist, 1):
-        total_videos = len(playlist.video_urls)
-        progress_step = 100 / total_videos
-        video = YouTube(url)
-        vid_id = extract.video_id(url)
-        thumbnail = Thumbnail(f"https://youtu.be/{vid_id}")
-        video.streams.filter(only_audio=True).first().download(output_folder)
-        for file in os.listdir(output_folder):
-            if re.search('mp4', file):
-                if progressbar.after(100):
-                     messagebox.showinfo("Finished!", "The playlist is done downlading and converting!")
-                     return
-                else:
-                    progressbar.update()
-                    progress.set(progress.get() + progress_step)
-                    thumbnail.fetch(size="maxresdefault")
-                    thumbnail.save(output_folder, "album_art_file")
-                    album_art_path = os.path.join(output_folder, "album_art_file.jpg")
-                    mp4_path = os.path.join(output_folder, file)
-                    mp3_path = os.path.join(output_folder, os.path.splitext(file)[0]+'.mp3')
-                    new_file = mp.AudioFileClip(mp4_path)
-                    new_file.write_audiofile(mp3_path)
-                    mp3_filename = os.path.basename(mp3_path)
-                    selected_music_file = os.path.join(output_folder, mp3_filename)
-                    no_art_file = eyed3.load(selected_music_file)
-                    no_art_file.tag.images.set(3, open(album_art_path, 'rb').read(), 'image/jpg')
-                    no_art_file.tag.save()
-                    if i < 10:
-                        os.rename(os.path.join(output_folder, mp3_filename), os.path.join(output_folder, f"00{i}_{mp3_filename}"))
-                    elif 100 > i >= 10:
-                        os.rename(os.path.join(output_folder, mp3_filename), os.path.join(output_folder, f"0{i}_{mp3_filename}"))
+    if CheckButtonMP3Pressed == True and "playlist" in PLAYLISTINPUT:
+        for i, url in enumerate(playlist, 1):
+            total_videos = len(playlist.video_urls)
+            progress_step = 100 / total_videos
+            video = YouTube(url)
+            vid_id = extract.video_id(url)
+            thumbnail = Thumbnail(f"https://youtu.be/{vid_id}")
+            video.streams.filter(only_audio=True).first().download(output_folder)
+            for file in os.listdir(output_folder):
+                if re.search('mp4', file):
+                    if progressbar.after(100):
+                        messagebox.showinfo("Finished!", "The playlist is done downlading and converting!")
+                        return
                     else:
-                        os.rename(os.path.join(output_folder, mp3_filename), os.path.join(output_folder, f"{i}_{mp3_filename}"))
-                    os.remove(mp4_path)
-                    os.remove(album_art_path)
+                        progressbar.update()
+                        progress.set(progress.get() + progress_step)
+                        thumbnail.fetch(size="maxresdefault")
+                        thumbnail.save(output_folder, "album_art_file")
+                        album_art_path = os.path.join(output_folder, "album_art_file.jpg")
+                        mp4_path = os.path.join(output_folder, file)
+                        mp3_path = os.path.join(output_folder, os.path.splitext(file)[0]+'.mp3')
+                        new_file = mp.AudioFileClip(mp4_path)
+                        new_file.write_audiofile(mp3_path)
+                        mp3_filename = os.path.basename(mp3_path)
+                        selected_music_file = os.path.join(output_folder, mp3_filename)
+                        no_art_file = eyed3.load(selected_music_file)
+                        no_art_file.tag.images.set(3, open(album_art_path, 'rb').read(), 'image/jpg')
+                        no_art_file.tag.save()
+                        if i < 10:
+                            os.rename(os.path.join(output_folder, mp3_filename), os.path.join(output_folder, f"00{i}_{mp3_filename}"))
+                        elif 100 > i >= 10:
+                            os.rename(os.path.join(output_folder, mp3_filename), os.path.join(output_folder, f"0{i}_{mp3_filename}"))
+                        else:
+                            os.rename(os.path.join(output_folder, mp3_filename), os.path.join(output_folder, f"{i}_{mp3_filename}"))
+                        os.remove(mp4_path)
+                        os.remove(album_art_path)
+    elif CheckButtonMP4Pressed == True and "watch" or ".be" in PLAYLISTINPUT:
+        video = YouTube(PLAYLISTINPUT)
+        video.streams.first().download(output_folder)
+    else:
+        messagebox.showerror("Error", "Please select a format")
+        return
 
 
 def select_folder():
@@ -97,8 +104,35 @@ progressbar.place(x=50, y=250, width=200)
 progress.set(0)
 
 
+
+CheckButtonMP3Pressed = tk.BooleanVar()
+CheckButtonMP4Pressed = tk.BooleanVar()
+
+def CheckButtonMP3Clicked():
+    CheckButtonMP3Pressed.set(TRUE)
+    
+
+CheckButtonMP3 = Checkbutton(
+    text="MP3", 
+    variable=CheckButtonMP3Pressed, 
+    command=CheckButtonMP3Clicked
+    )
+
+def CheckButtonMP4Clicked():
+    CheckButtonMP4Pressed.set(TRUE)
+    return CheckButtonMP4Pressed
+
+CheckButtonMP4 = Checkbutton(
+    text="MP4", 
+    variable=CheckButtonMP4Pressed, 
+    command=CheckButtonMP4Clicked
+    )
+
+
 l1.pack()
 playlisttxt.pack()
+CheckButtonMP3.pack()
+CheckButtonMP4.pack()
 folder_button.pack()
 download_button.pack()
 progressbar.pack(fill=tk.X, padx=10, pady=5)
