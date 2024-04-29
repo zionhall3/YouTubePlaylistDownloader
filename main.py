@@ -70,6 +70,8 @@ def StartConversion():
     elif CheckButtonMP4Pressed == True and "watch" or ".be" in PLAYLISTINPUT:
         video = YouTube(PLAYLISTINPUT)
         video.streams.first().download(output_folder)
+    elif CheckButtonMP3Pressed == True and  "watch" or ".be" in PLAYLISTINPUT:
+        pass
     else:
         messagebox.showerror("Error", "Please select a format")
         return
