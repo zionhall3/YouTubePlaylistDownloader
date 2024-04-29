@@ -31,7 +31,7 @@ def StartConversion():
         messagebox.showerror("Error", "Please select an output folder")
         return
 
-    if CheckButtonMP3Pressed == True and "playlist" in PLAYLISTINPUT:
+    if CheckButtonMP3Pressed and "playlist" in PLAYLISTINPUT:
         for i, url in enumerate(playlist, 1):
             total_videos = len(playlist.video_urls)
             progress_step = 100 / total_videos
@@ -67,10 +67,10 @@ def StartConversion():
                             os.rename(os.path.join(output_folder, mp3_filename), os.path.join(output_folder, f"{i}_{mp3_filename}"))
                         os.remove(mp4_path)
                         os.remove(album_art_path)
-    elif CheckButtonMP4Pressed == True and "watch" or ".be" in PLAYLISTINPUT:
+    elif CheckButtonMP4Pressed and "watch" or ".be" in PLAYLISTINPUT:
         video = YouTube(PLAYLISTINPUT)
         video.streams.first().download(output_folder)
-    elif CheckButtonMP3Pressed == True and  "watch" or ".be" in PLAYLISTINPUT:
+    elif CheckButtonMP3Pressed and  "watch" or ".be" in PLAYLISTINPUT:
         pass
     else:
         messagebox.showerror("Error", "Please select a format")
@@ -112,6 +112,7 @@ CheckButtonMP4Pressed = tk.BooleanVar()
 
 def CheckButtonMP3Clicked():
     CheckButtonMP3Pressed.set(TRUE)
+    return CheckButtonMP3Pressed
     
 
 CheckButtonMP3 = Checkbutton(
