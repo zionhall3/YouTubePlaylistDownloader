@@ -69,9 +69,15 @@ def StartConversion():
                         os.remove(album_art_path)
     elif CheckButtonMP4Pressed and "watch" or ".be" in PLAYLISTINPUT:
         video = YouTube(PLAYLISTINPUT)
-        video.streams.first().download(output_folder)
+        video.streams.filter(only_audio=True).first().download(output_folder)
+        
     elif CheckButtonMP3Pressed and  "watch" or ".be" in PLAYLISTINPUT:
-        pass
+        video_link = YouTube(PLAYLISTINPUT)
+        video = video_link.streams.filter(only_audio=True).first()
+        video_file = video.download(output_folder)
+        base, ext = os.path.splitext(video_file)
+        new_mp3_file = base + '.mp3'
+        os.rename(video_file, new_mp3_file)
     else:
         messagebox.showerror("Error", "Please select a format")
         return
@@ -140,4 +146,4 @@ folder_button.pack()
 download_button.pack()
 progressbar.pack(fill=tk.X, padx=10, pady=5)
  
-mainloop()
+root.mainloop()
