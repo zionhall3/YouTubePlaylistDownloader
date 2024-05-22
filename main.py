@@ -15,6 +15,7 @@ folder_selected = False
 
 root = Tk()
 root.resizable(width=False, height=False)
+#Keeps window at a small compact size
 root.title(" YouTube Playlist Downloader ")
  
 def StartConversion():
@@ -23,6 +24,7 @@ def StartConversion():
 
     playlist_link_input = PLAYLISTINPUT
     playlist = Playlist(playlist_link_input)
+    #Gets text input and converts it into a Playlist object
 
     if playlist_link_input == "":
         messagebox.showerror("Error", "Please enter a playlist URL")
@@ -31,6 +33,7 @@ def StartConversion():
     elif folder_selected == False:
         messagebox.showerror("Error", "Please select an output folder")
         return
+    #Returns errors to make sure folders are selected and there is a link.
 
     for i, url in enumerate(playlist, 1):
         total_videos = len(playlist.video_urls)
@@ -84,11 +87,15 @@ def StartConversion():
                 progressbar.update()
 
 
+Folder_Button_Text1 = "Please select a folder"
+Folder_Button_Text2 = "Folder has been selected"
+
 def select_folder():
         global output_folder
         output_folder = filedialog.askdirectory()
         global folder_selected
         folder_selected = True
+        folder_button.config(text=Folder_Button_Text2)
      
 l1 = Label(text = "Enter your playlist link:")
 playlisttxt = Text(root, height = 1,
@@ -98,7 +105,7 @@ playlisttxt = Text(root, height = 1,
 
 folder_button = Button(root, height = 2,
                  width = 20,
-                 text= "Select Folder", 
+                 text= Folder_Button_Text1, 
                  command = lambda:select_folder())
 
 download_button = Button(root, height = 2,
