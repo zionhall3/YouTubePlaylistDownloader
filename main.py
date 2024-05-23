@@ -44,6 +44,7 @@ def StartConversion():
         video.streams.filter(only_audio=True).first().download(output_folder)
         for file in os.listdir(output_folder):
             if re.search('mp4', file):
+                progress.set(progress.get() + progress_step)
                 thumbnail.fetch(size="maxresdefault")
                 thumbnail.save(output_folder, "album_art_file", overwrite=True)
                 album_art_path = os.path.join(output_folder, "album_art_file.jpg")
@@ -56,7 +57,6 @@ def StartConversion():
                 no_art_file = eyed3.load(selected_music_file)
                 no_art_file.tag.images.set(3, open(album_art_path, 'rb').read(), 'image/jpg')
                 no_art_file.tag.save()
-                print(output_folder)
                 if i < 10:
                      original_file_path = os.path.join(output_folder, mp3_filename)
                      numbered_file_name = f"00{i}_{mp3_filename}"
@@ -80,9 +80,9 @@ def StartConversion():
                      os.rename(original_file_path, numbered_file_path)
                 os.remove(mp4_path)
                 os.remove(album_art_path)
-                progress.set(progress.get() + progress_step)
                 if progressbar.step(99.9):
                      messagebox.showinfo("Finished!", "The playlist is done downlading and converting!")
+                     os.startfile(output_folder)
                      return
                 progressbar.update()
 
