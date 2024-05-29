@@ -3,6 +3,7 @@ from pytube import Playlist
 import os
 from tkinter import *
 import tkinter as tk
+from tkinter.simpledialog import askstring
 from tkinter import filedialog, messagebox, ttk
 import moviepy.editor as mp
 import re
@@ -105,6 +106,10 @@ def StartConversion():
          no_art_file.tag.save()
          os.remove(mp4_path)
          os.remove(album_art_path)
+         new_song_name = askstring("New Song Name?", "How would you like this song's name to be saved?")
+         os.rename(selected_music_file, {}).format(new_song_name)
+         messagebox.showinfo("Finished!", "The song is done downlading and converting!")
+         os.startfile(output_folder)
 
 Folder_Button_Text1 = "Please select a folder"
 Folder_Button_Text2 = "Folder has been selected"
