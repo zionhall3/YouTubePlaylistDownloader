@@ -45,7 +45,6 @@ def StartConversion():
           video.streams.filter(only_audio=True).first().download(output_folder)
           for file in os.listdir(output_folder):
                if re.search('mp4', file):
-                    progress.set(progress.get() + progress_step)
                     thumbnail.fetch(size="maxresdefault")
                     thumbnail.save(output_folder, "album_art_file", overwrite=True)
                     album_art_path = os.path.join(output_folder, "album_art_file.jpg")
@@ -81,11 +80,12 @@ def StartConversion():
                          os.rename(original_file_path, numbered_file_path)
                     os.remove(mp4_path)
                     os.remove(album_art_path)
+                    progress.set(progress.get() + progress_step)
+                    progressbar.update()
                     if progressbar.step(99.9):
                          messagebox.showinfo("Finished!", "The playlist is done downlading and converting!")
                          os.startfile(output_folder)
                          return
-                    progressbar.update()
     elif ".be" or "watch" in PLAYLISTINPUT:
          url = PLAYLISTINPUT
          video = YouTube(url)
@@ -149,6 +149,7 @@ progress.set(0)
 
 l1.pack()
 playlisttxt.pack()
+playlisttxt.focus_set()
 folder_button.pack()
 download_button.pack()
 progressbar.pack(fill=tk.X, padx=10, pady=5)
