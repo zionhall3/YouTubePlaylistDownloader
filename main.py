@@ -37,7 +37,7 @@ def StartConversion():
         return
     #Returns errors to make sure folders are selected and there is a link.
     
-    if "youtube.com/watch?v=" in playlist_link_input:
+    if "playlist" not in playlist_link_input:
          video = YouTube(playlist_link_input)
          vid_id = extract.video_id(playlist_link_input)
          thumbnail = Thumbnail(f"https://youtu.be/{vid_id}")
