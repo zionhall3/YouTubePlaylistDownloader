@@ -43,7 +43,7 @@ def StartConversion():
          video = YouTube(playlist_link_input)
          vid_id = extract.video_id(playlist_link_input)
          thumbnail = Thumbnail(f"https://youtu.be/{vid_id}")
-         video.streams.filter(only_audio=True).first().download(output_folder)
+         video.streams.filter().first().download(output_folder)
          thumbnail.fetch(size="maxresdefault")
          thumbnail.save(output_folder, "album_art_file", overwrite=True)
          album_art_path = os.path.join(output_folder, "album_art_file.jpg")
@@ -56,7 +56,13 @@ def StartConversion():
          no_art_file = eyed3.load(selected_music_file)
          no_art_file.tag.images.set(3, open(album_art_path, 'rb').read(), 'image/jpg')
          no_art_file.tag.save()
-         os.remove(mp4_path)
+         with VFClip.VideoFileClip(mp4_path) as opened_mp4:
+          pass
+         #This opens and closes the video path file to prevent any Permission Errors.
+         try:
+              os.remove(mp4_path)
+         except PermissionError:
+               print("Permission Error")
          os.remove(album_art_path)
          progress.set(100)
          if progressbar.step(100):
