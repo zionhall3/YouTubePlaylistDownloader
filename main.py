@@ -1,8 +1,11 @@
-from pytube import YouTube, extract
-from pytube import Playlist
+from pytubefix import YouTube, extract, Playlist
+#from pytube import YouTube, extract
+#from pytube import Playlist
 #Try using pytubefix or install the newer working fork until further notice.
+#pip install pytubefix
 #pip uninstall pytube
 #pip install git+https://github.com/kszczepanskidev/pytube
+#Make sure to log out of your YT account so you aren't detected as a bot.
 import os
 from tkinter import *
 import tkinter as tk
