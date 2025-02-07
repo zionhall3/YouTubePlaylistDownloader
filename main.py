@@ -1,5 +1,8 @@
 from pytube import YouTube, extract
 from pytube import Playlist
+#Try using pytubefix or install the newer working fork until further notice.
+#pip uninstall pytube
+#pip install git+https://github.com/kszczepanskidev/pytube
 import os
 from tkinter import *
 import tkinter as tk
